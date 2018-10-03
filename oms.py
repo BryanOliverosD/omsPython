@@ -4,37 +4,28 @@ import re
 from unicodedata import normalize
 import math
 
-class ShippingMatrix():
+class ShippingFalabella():
 
 	nombreProducto = ""
 	SKU = ""
 	comuna = ""
 	region = ""
+	nombreTienda = ""
 
-	precio_MT_Falabella = ""
-	precio_BT_Falabella = ""
-	precio_SBT_Falabella = ""
-	dias_MT_Falabella = ""
-	dias_BT_Falabella = ""
-	dias_SBT_Falabella = ""
+	precio_MT = ""
+	precio_BT = ""
+	precio_SBT = ""
+	dias_MT = ""
+	dias_BT = ""
+	dias_SBT = ""
 
-	precio_MT_Paris = ""
-	precio_BT_Paris = ""
-	precio_SBT_Paris = ""
-	dias_MT_Paris = ""
-	dias_BT_Paris = ""
-	dias_SBT_Paris = ""
+class ShippingRipley():
 
-	precio_MT_Ripley = ""
-	precio_BT_Ripley = ""
-	precio_SBT_Ripley = ""
-	dias_MT_Ripley = ""
-	dias_BT_Ripley = ""
-	dias_SBT_Ripley = ""
-
-"""class ShippingRipley():
-
-	nombreTienda =""
+	nombreProducto = ""
+	SKU = ""
+	comuna = ""
+	region = ""
+	nombreTienda = ""
 
 	precio_MT = ""
 	precio_BT = ""
@@ -45,6 +36,10 @@ class ShippingMatrix():
 
 class ShippingParis():
 
+	nombreProducto = ""
+	SKU = ""
+	comuna = ""
+	region = ""
 	nombreTienda = ""
 
 	precio_MT = ""
@@ -52,7 +47,7 @@ class ShippingParis():
 	precio_SBT = ""
 	dias_MT = ""
 	dias_BT = ""
-	dias_SBT = """
+	dias_SBT = ""
 
 
 ##### Se copia información desde archivo shipping a propuesta #####
@@ -134,73 +129,87 @@ def AlmacenarDatos(name_propuesta):
 
 	for fila in range(0,len(df)):
 		
-		
-		#para llenar el objeto completo
 		if str(df.iloc[fila,2]) not in almacenador:
 			#lista almacenador de objetos
 			
-			shippingmatrix = ShippingMatrix()
+			objetos = []
 		else:
 
-			shippingmatrix = almacenador.get(df.iloc[fila,2])
-
-		shippingmatrix.region = df.iloc[fila,1]
-		shippingmatrix.comuna = df.iloc[fila,2]
-		shippingmatrix.SKU = df.iloc[fila,3]
-		shippingmatrix.nombreProducto = df.iloc[fila,4]
+			objetos = almacenador.get(df.iloc[fila,2])
 
 		tienda = str(df.iloc[fila,0])
 		# identifica si la columna tienda es Falabella
 		if tienda.lower() == "falabella":
 
+			shipping_Falabella = ShippingFalabella()
+			shipping_aux = shipping_Falabella
+			shipping_Falabella.nombreTienda = df.iloc[fila,0]
+			shipping_Falabella.region = df.iloc[fila,1]
+			shipping_Falabella.comuna = df.iloc[fila,2]
+			shipping_Falabella.SKU = df.iloc[fila,3]
+			shipping_Falabella.nombreProducto = df.iloc[fila,4]
 			#shippingmatrix.nombreTienda = str(df.iloc[fila,0])
 			# identifica si la columna tamaño es de mt/bt/sbt
 			if df.iloc[fila,7] == "MT":
-				shippingmatrix.precio_MT_Falabella = df.iloc[fila,5]
-				shippingmatrix.dias_MT_Falabella = df.iloc[fila,6]
+				shipping_Falabella.precio_MT = df.iloc[fila,5]
+				shipping_Falabella.dias_MT = df.iloc[fila,6]
 			elif df.iloc[fila,7] == "BT":
-				shippingmatrix.precio_BT_Falabella = df.iloc[fila,5]
-				shippingmatrix.dias_BT_Falabella = df.iloc[fila,6]
+				shipping_Falabella.precio_BT = df.iloc[fila,5]
+				shipping_Falabella.dias_BT = df.iloc[fila,6]
 			elif df.iloc[fila,7] == "SBT":
-				shippingmatrix.precio_SBT_Falabella = df.iloc[fila,5]
-				shippingmatrix.dias_SBT_Falabella = df.iloc[fila,6]
+				shipping_Falabella.precio_SBT = df.iloc[fila,5]
+				shipping_Falabella.dias_SBT = df.iloc[fila,6]
 
-			#objetos.append(shippingF)
 		# identifica si la columna tienda es Ripley
 		elif tienda.lower() == "ripley":
 
-			#shippingR.nombreTienda = str(df.iloc[fila,0])
+			shipping_Ripley = ShippingRipley()
+			shipping_aux = shipping_Ripley
+			shipping_Ripley.nombreTienda = df.iloc[fila,0]
+			shipping_Ripley.region = df.iloc[fila,1]
+			shipping_Ripley.comuna = df.iloc[fila,2]
+			shipping_Ripley.SKU = df.iloc[fila,3]
+			shipping_Ripley.nombreProducto = df.iloc[fila,4]
 			# identifica si la columna tamaño es de mt/bt/sbt
 			if df.iloc[fila,7] == "MT":
-				shippingmatrix.precio_MT_Ripley = df.iloc[fila,5]
-				shippingmatrix.dias_MT_Ripley = df.iloc[fila,6]
+				shipping_Ripley.precio_MT = df.iloc[fila,5]
+				shipping_Ripley.dias_MT = df.iloc[fila,6]
 			elif df.iloc[fila,7] == "BT":
-				shippingmatrix.precio_BT_Ripley = df.iloc[fila,5]
-				shippingmatrix.dias_BT_Ripley = df.iloc[fila,6]
+				shipping_Ripley.precio_B = df.iloc[fila,5]
+				shipping_Ripley.dias_B = df.iloc[fila,6]
 			elif df.iloc[fila,7] == "SBT":
-				shippingmatrix.precio_SBT_Ripley = df.iloc[fila,5]
-				shippingmatrix.dias_SBT_Ripley = df.iloc[fila,6]
+				shipping_Ripley.precio_SBT = df.iloc[fila,5]
+				shipping_Ripley.dias_SBT = df.iloc[fila,6]
 
-			#objetos.append(shippingR)
 		# identifica si la columna tienda es Paris
 		elif tienda.lower() == "paris":
 
-			#shippingP.nombreTienda = str(df.iloc[fila,0])
+			shipping_Paris = ShippingParis()
+			shipping_aux = shipping_Paris
+			shipping_Paris.nombreTienda = df.iloc[fila,0]
+			shipping_Paris.region = df.iloc[fila,1]
+			shipping_Paris.comuna = df.iloc[fila,2]
+			shipping_Paris.SKU = df.iloc[fila,3]
+			shipping_Paris.nombreProducto = df.iloc[fila,4]
 			# identifica si la columna tamaño es de mt/bt/sbt
-			if df.iloc[fila,5] == "MT":
-				shippingmatrix.precio_MT_Paris = df.iloc[fila,5]
-				shippingmatrix.dias_MT_Paris= df.iloc[fila,6]
-			elif df.iloc[fila,5] == "BT":
-				shippingmatrix.precio_BT_Paris = df.iloc[fila,5]
-				shippingmatrix.dias_BT_Paris = df.iloc[fila,6]
-			elif df.iloc[fila,5] == "SBT":
-				shippingmatrix.precio_SBT_Paris = df.iloc[fila,5]
-				shippingmatrix.dias_SBT_Paris = df.iloc[fila,6]
-		
+			if df.iloc[fila,7] == "MT":
+				shipping_Paris.precio_MT = df.iloc[fila,5]
+				shipping_Paris.dias_MT= df.iloc[fila,6]
+			elif df.iloc[fila,7] == "BT":
+				shipping_Paris.precio_BT = df.iloc[fila,5]
+				shipping_Paris.dias_BT = df.iloc[fila,6]
+			elif df.iloc[fila,7] == "SBT":
+				shipping_Paris.precio_SBT = df.iloc[fila,5]
+				shipping_Paris.dias_SBT = df.iloc[fila,6]
+		# no se toma encuenta el calzado
+		if df.iloc[fila,7] != "Calzado":
+			objetos.append(shipping_aux)
 		# Validamos si la ciudad se encuentra en el diccionario, si está se agrega a la lista que arrastra, si no se agrega al diccionario.     
 		if str(df.iloc[fila,1]) not in almacenador:
-			almacenador[str(df.iloc[fila,2])] = shippingmatrix
+			almacenador[str(df.iloc[fila,2])] = objetos
 			#print(almacenador)
+		else:
+			almacenador[str(df.iloc[fila,2])] = objetos + almacenador[str(df.iloc[fila,2])]
 	return almacenador
 
 
@@ -341,13 +350,14 @@ def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompet
 def DefinirMejorC(almacenador):
 
 	for comuna in almacenador:
-		objetos = almacenador[comuna]
-		print(comuna, "Precio Falabella BT: ",objetos.precio_BT_Falabella, "Dias Falabella BT: ", objetos.dias_BT_Falabella,
-		 "Precio f MT: ",objetos.precio_MT_Falabella, "Dia f MT: ", objetos.dias_MT_Falabella,
-		  "PRECIO f SBT: ",objetos.precio_SBT_Falabella, "Dias f SBT: ", objetos.dias_SBT_Falabella, 
-		  "PRODUCTO: ",objetos.nombreProducto,"REGION : ", objetos.region, "COMUNA: ",objetos.comuna, "SKU :",objetos.SKU)
-		print()
-		print()
+		print(comuna, ": ", len(almacenador[comuna]))
+		for objetos in almacenador[comuna]:
+			print("Precio Falabella BT: ",objetos.precio_BT, "Dias Falabella BT: ", objetos.dias_BT,
+			"Precio f MT: ",objetos.precio_MT, "Dia f MT: ", objetos.dias_MT,
+			"PRECIO f SBT: ",objetos.precio_SBT, "Dias f SBT: ", objetos.dias_SBT, 
+			"PRODUCTO: ",objetos.nombreProducto,"REGION : ", objetos.region, "COMUNA: ",objetos.comuna, "SKU :",objetos.SKU)
+			print()
+			print()
 ##################### MAIN ###################
 
 almacenador = {}
