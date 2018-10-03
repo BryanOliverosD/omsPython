@@ -358,7 +358,8 @@ def DefinirMejorC(almacenador):
 			"PRODUCTO: ",objetos.nombreProducto,"REGION : ", objetos.region, "COMUNA: ",objetos.comuna, "SKU :",objetos.SKU)
 			print()
 			print()
-##################### MAIN ###################
+			print()
+			## MAIN ###################
 
 almacenador = {}
 
