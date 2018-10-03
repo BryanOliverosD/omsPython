@@ -175,8 +175,8 @@ def AlmacenarDatos(name_propuesta):
 				shipping_Ripley.precio_MT = df.iloc[fila,5]
 				shipping_Ripley.dias_MT = df.iloc[fila,6]
 			elif df.iloc[fila,7] == "BT":
-				shipping_Ripley.precio_B = df.iloc[fila,5]
-				shipping_Ripley.dias_B = df.iloc[fila,6]
+				shipping_Ripley.precio_BT = df.iloc[fila,5]
+				shipping_Ripley.dias_BT= df.iloc[fila,6]
 			elif df.iloc[fila,7] == "SBT":
 				shipping_Ripley.precio_SBT = df.iloc[fila,5]
 				shipping_Ripley.dias_SBT = df.iloc[fila,6]
@@ -365,9 +365,9 @@ almacenador = {}
 
 file_name_shipping = "shipping_Falabella.xls"
 file_name_propuesta = "propuesta2.xlsx"
-#CopiarHojaDetalle(file_name_propuesta,file_name_shipping)
-#ValidarParametrosBase(file_name_propuesta)
+CopiarHojaDetalle(file_name_propuesta,file_name_shipping)
+ValidarParametrosBase(file_name_propuesta)
 almacenador = AlmacenarDatos(file_name_propuesta)
-#ActualizarDetalle(file_name_propuesta,almacenador)
+ActualizarDetalle(file_name_propuesta,almacenador)
 #ArbolDecision(7,10990,7,2990)
-DefinirMejorC(almacenador)
+#DefinirMejorC(almacenador)
