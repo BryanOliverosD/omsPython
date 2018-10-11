@@ -56,9 +56,6 @@ class ShippingParis():
 	tarifaSugerida = ""
 
 
-
-
-
 ##### Se copia información desde archivo shipping a propuesta #####
 def CopiarHojaDetalle(name_propuesta,name_shipping):
 
@@ -359,47 +356,61 @@ def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompet
 			tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 			print("TM : ", tarifaMax + 1000)
 
-def DefinirMejorC(almacenador):
+def DefinirMejorC(detalle):
 
-	for comuna in almacenador:
+	for comuna in detalle:
+		print(comuna)
 
-		precioCompetidor1 = 0
-		precioCompetidor2 = 0
-		diasCompetidor1 = 0
-		diasCompetidor2 = 0
+		diasFalabella_MT = (detalle[comuna])[1]
+		precioFalabella_MT = (detalle[comuna])[0]
 
-		#recorrer lista de objetos
-		for objeto in almacenador[comuna]:
-			#consultamos por MT en cada tienda
-			if objeto.precio_MT != "":
-				if (objeto.nombreTienda).lower() =="ripley":
-					print("ripley")
-					#se asignan las variables del competidor
-					precioCompetidor1 = objeto.precio_MT
-					diasCompetidor1 = objeto.dias_MT
-
-				elif(objeto.nombreTienda).lower() == "paris":
-					print("paris")
-					#se asignan las variables del competidor
-					precioCompetidor2 = objeto.precio_MT
-					diasCompetidor2 = objeto.dias_MT
-
-				elif(objeto.nombreTienda).lower() == "falabella":
-					#asignar variables de falabella
-					diasFalabella = objeto.dias_MT
-					precioFalabella = objeto.precio_MT
-				
+		diasRipley_MT = (detalle[comuna])[3]
+		precioRipley_MT = (detalle[comuna])[2]
 		
-		# definir cual es el mejor competidor
-		if diasCompetidor1 > diasCompetidor2:
+		diasParis_MT = (detalle[comuna])[5]
+		precioParis_MT = (detalle[comuna])[4]
 
-			dias_mejorC = diasCompetidor2
-			precio_mejorC = precioCompetidor2
-		else:
-			dias_mejorC = diasCompetidor1
-			precio_mejorC = precioCompetidor1
+		print(diasRipley_MT,diasParis_MT)
 
-		ArbolDecision(diasFalabella,precioFalabella,dias_mejorC,precio_mejorC)
+		# Validación relacionada a la no información de Falabella
+		if (diasFalabella_MT == -1 and precioFalabella_MT == -1):
+			print("SIN FALABELLA MANTENER VALOR")
+			((detalle[comuna])).insert(7,"Mantener valor")
+
+		# Validación relacionada a la no información de competidores	
+		elif(diasRipley_MT == -1 and precioRipley_MT == -1 and precioParis_MT == -1 and diasParis_MT):
+			print("Competidores sin información")
+			((detalle[comuna])).insert(7,precioFalabella_MT)
+			
+		# Validación en caso que ripley no tenga información
+		elif (diasRipley_MT == -1 and precioRipley_MT == -1):
+			print("MEJOR COMPETIDOR PARIS")
+			dias_mejorC = diasParis_MT
+			precio_mejorC = precioParis_MT
+			#árbol con Paris
+			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+
+		# Validación en caso que paris no tenga información
+		elif (diasParis_MT == -1 and precioParis_MT == -1):
+			print("MEJOR COMPETIDOR Ripley")
+			dias_mejorC = diasRipley_MT
+			precio_mejorC = precioRipley_MT
+			#árbol con Ripley
+			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+
+		elif (diasParis_MT != -1 and diasRipley_MT != -1 and precioRipley_MT != -1 and precioParis_MT != -1):
+
+			if(diasRipley_MT > diasParis_MT):
+
+				dias_mejorC = diasParis_MT
+				precio_mejorC = precioParis_MT
+			else:
+				dias_mejorC = diasRipley_MT
+				precio_mejorC = precioRipley_MT
+
+			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+		print()
+		print()
 
 def ReordenarDiccionario(almacenador):
 
@@ -408,14 +419,14 @@ def ReordenarDiccionario(almacenador):
 	#inicializamos matriz detalle tabla detalle
 	for comuna in almacenador:
 
-		lista_valores = ["","","","","","","","","",
-					"","","","","","","","","",
-					"","","","","","","","",""]
+		lista_valores = [-1,-1,-1,-1,-1,-1,-1,-1,-1,
+					-1,-1,-1,-1,-1,-1,-1,-1,-1,
+					-1,-1,-1,-1,-1,-1,-1,-1,-1]
 		detalle[comuna] = lista_valores
 
 	#llenamos la lista de valores
 	for comuna in almacenador:
-		print(comuna)
+		
 		for objeto in almacenador[comuna]:
 
 			#consultamos por MT en cada tienda
@@ -491,12 +502,5 @@ file_name_propuesta = "propuesta2.xlsx"
 #ValidarParametrosBase(file_name_propuesta)
 almacenador = AlmacenarDatos(file_name_propuesta)
 #ActualizarDetalle(file_name_propuesta,almacenador)
-#ArbolDecision(7,10990,7,2990)
-#DefinirMejorC(almacenador)
 detalle = ReordenarDiccionario(almacenador)
-for comuna in detalle:
-	print(comuna)
-	for valor in detalle[comuna]:
-		print(valor," ",end="")
-	print()
-	print()
+DefinirMejorC(detalle)
