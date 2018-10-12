@@ -303,8 +303,8 @@ def ActualizarDetalle(name_propuesta,almacenador):
 	writer.save()
 
 def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompetidor):
-	print("DIAS F : ",diasFalabella,"Tarifa F : ",tarifaFalabella,"DIAS MC : ",diasMCompetidor, " TarifaMC : ",tarifaMCompetidor)
-
+	#print("DIAS F : ",diasFalabella,"Tarifa F : ",tarifaFalabella,"DIAS MC : ",diasMCompetidor, " TarifaMC : ",tarifaMCompetidor)
+	valor_escenario = []
 	#Se comparan los días entre Falabella y el mejor competidor
 	#Más lento que el mejor competidor
 	if (diasFalabella > diasMCompetidor):
@@ -312,18 +312,25 @@ def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompet
 		if(1 <= abs(diasMCompetidor - diasFalabella) <= 2):
 			
 			if(tarifaFalabella != tarifaMCompetidor):
+
 				print("ESCENARIO 1 - Tarifa mínima")
 				tarifaMin = min(tarifaMCompetidor,tarifaFalabella)
 				print("TM : ", tarifaMin)
+				valor_escenario.append("Escenario 1")
+				valor_escenario.append(tarifaMin)
 			else:
 				print("ESCENARIO 2 - Tarifa mínima - x%")
 				tarifaMin = min(tarifaMCompetidor,tarifaFalabella)
 				print("TM : ", tarifaMin-0)
+				valor_escenario.append("Escenario 2")
+				valor_escenario.append(tarifaMin-0)
 		
 		elif (abs(diasMCompetidor - diasFalabella) > 2):
 			print("ESCENARIO 3 - Tarifa mínima - y%")
 			tarifaMin = min(tarifaMCompetidor,tarifaFalabella)
 			print("TM : ", tarifaMin-10)
+			valor_escenario.append("Escenario 3")
+			valor_escenario.append(tarifaMin-10)
 
 	#mismos días de entrega
 	elif (diasFalabella == diasMCompetidor):
@@ -332,10 +339,14 @@ def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompet
 			print("ESCENARIO 4 - Tarifa max")
 			tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 			print("TM : ", tarifaMax)
+			valor_escenario.append("Escenario 4")
+			valor_escenario.append(tarifaMax)
 		else:
 			print("ESCENARIO 5 - Tarifa max")
 			tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 			print("TM : ", tarifaMax)
+			valor_escenario.append("Escenario 5")
+			valor_escenario.append(tarifaMax)
 
 	# Más rápido que el mejor competidor
 	elif(diasFalabella < diasMCompetidor):
@@ -346,17 +357,27 @@ def ArbolDecision(diasFalabella, tarifaFalabella, diasMCompetidor, tarifaMCompet
 				print("ESCENARIO 6 - Tarifa max + a%")
 				tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 				print("TM : ", tarifaMax+500)
+				valor_escenario.append("Escenario 6")
+				valor_escenario.append(tarifaMax+500)
 			else:
 				print("ESCENARIO 7 - Tarifa max - b%")
 				tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 				print("TM : ", tarifaMax+750)
+				valor_escenario.append("Escenario 7")
+				valor_escenario.append(tarifaMax+750)
 		
 		elif (abs(diasMCompetidor - diasFalabella) > 2):
 			print("ESCENARIO 8 - Tarifa max - c%")
 			tarifaMax = max(tarifaMCompetidor,tarifaFalabella)
 			print("TM : ", tarifaMax + 1000)
+			valor_escenario.append("Escenario 8")
+			valor_escenario.append(tarifaMax+1000)
+	
+	return valor_escenario
 
 def DefinirMejorC(detalle):
+
+	valor_escenario = []
 
 	for comuna in detalle:
 		print(comuna)
@@ -375,12 +396,12 @@ def DefinirMejorC(detalle):
 		# Validación relacionada a la no información de Falabella
 		if (diasFalabella_MT == -1 and precioFalabella_MT == -1):
 			print("SIN FALABELLA MANTENER VALOR")
-			((detalle[comuna])).insert(7,"Mantener valor")
+			(detalle[comuna])[7] = "Mantener valor"
 
 		# Validación relacionada a la no información de competidores	
 		elif(diasRipley_MT == -1 and precioRipley_MT == -1 and precioParis_MT == -1 and diasParis_MT):
 			print("Competidores sin información")
-			((detalle[comuna])).insert(7,precioFalabella_MT)
+			(detalle[comuna])[7] = precioFalabella_MT
 			
 		# Validación en caso que ripley no tenga información
 		elif (diasRipley_MT == -1 and precioRipley_MT == -1):
@@ -388,7 +409,10 @@ def DefinirMejorC(detalle):
 			dias_mejorC = diasParis_MT
 			precio_mejorC = precioParis_MT
 			#árbol con Paris
-			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			valor_escenario = ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			#insertamos el escenario y su tarifa sugerida
+			(detalle[comuna])[6] = valor_escenario[0]
+			(detalle[comuna])[7] = valor_escenario[1]
 
 		# Validación en caso que paris no tenga información
 		elif (diasParis_MT == -1 and precioParis_MT == -1):
@@ -396,7 +420,10 @@ def DefinirMejorC(detalle):
 			dias_mejorC = diasRipley_MT
 			precio_mejorC = precioRipley_MT
 			#árbol con Ripley
-			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			valor_escenario = ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			#insertamos el escenario y su tarifa sugerida
+			(detalle[comuna])[6] = valor_escenario[0]
+			(detalle[comuna])[7] = valor_escenario[1]
 
 		elif (diasParis_MT != -1 and diasRipley_MT != -1 and precioRipley_MT != -1 and precioParis_MT != -1):
 
@@ -408,9 +435,14 @@ def DefinirMejorC(detalle):
 				dias_mejorC = diasRipley_MT
 				precio_mejorC = precioRipley_MT
 
-			ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			valor_escenario = ArbolDecision(diasFalabella_MT,precioFalabella_MT,dias_mejorC,precio_mejorC)
+			#insertamos el escenario y su tarifa sugerida
+			(detalle[comuna])[6] = valor_escenario[0]
+			(detalle[comuna])[7] = valor_escenario[1]
 		print()
 		print()
+
+	return detalle
 
 def ReordenarDiccionario(almacenador):
 
@@ -433,58 +465,58 @@ def ReordenarDiccionario(almacenador):
 			if objeto.precio_MT != "":
 				if (objeto.nombreTienda).lower() =="ripley":
 					
-					(detalle[comuna]).insert(2,objeto.precio_MT)
-					(detalle[comuna]).insert(3,objeto.dias_MT)
+					(detalle[comuna])[2] = objeto.precio_MT
+					(detalle[comuna])[3] = objeto.dias_MT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "paris":
 					
-					(detalle[comuna]).insert(4,objeto.precio_MT)
-					(detalle[comuna]).insert(5,objeto.dias_MT)
+					(detalle[comuna])[4] = objeto.precio_MT
+					(detalle[comuna])[5] = objeto.dias_MT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "falabella":
 					
-					(detalle[comuna]).insert(0,objeto.precio_MT)
-					(detalle[comuna]).insert(1,objeto.dias_MT)
+					(detalle[comuna])[0] = objeto.precio_MT
+					(detalle[comuna])[1] = objeto.dias_MT
 
 			#consultamos por BT en cada tienda
 			elif objeto.precio_BT != "":
 				if (objeto.nombreTienda).lower() =="ripley":
 					
-					(detalle[comuna]).insert(12,objeto.precio_BT)
-					(detalle[comuna]).insert(13,objeto.dias_BT)
+					(detalle[comuna])[11] = objeto.precio_BT
+					(detalle[comuna])[12] = objeto.dias_BT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "paris":
 					
-					(detalle[comuna]).insert(14,objeto.precio_BT)
-					(detalle[comuna]).insert(15,objeto.dias_BT)
+					(detalle[comuna])[13] = objeto.precio_BT
+					(detalle[comuna])[14] = objeto.dias_BT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "falabella":
 					
-					(detalle[comuna]).insert(10,objeto.precio_BT)
-					(detalle[comuna]).insert(11,objeto.dias_BT)
+					(detalle[comuna])[9] = objeto.precio_BT
+					(detalle[comuna])[10] = objeto.dias_BT
 
 			#consultamos por SBT en cada tienda
 			elif objeto.precio_SBT != "":
 				if (objeto.nombreTienda).lower() =="ripley":
 					
-					(detalle[comuna]).insert(21,objeto.precio_SBT)
-					(detalle[comuna]).insert(22,objeto.dias_SBT)
+					(detalle[comuna])[20] = objeto.precio_SBT
+					(detalle[comuna])[21] = objeto.dias_SBT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "paris":
 					
-					(detalle[comuna]).insert(23,objeto.precio_SBT)
-					(detalle[comuna]).insert(24,objeto.dias_SBT)
+					(detalle[comuna])[22] = objeto.precio_SBT
+					(detalle[comuna])[23] = objeto.dias_SBT
 					#se asignan las variables del competidor
 
 				elif(objeto.nombreTienda).lower() == "falabella":
 					
-					(detalle[comuna]).insert(19,objeto.precio_SBT)
-					(detalle[comuna]).insert(20,objeto.dias_SBT)
+					(detalle[comuna])[18] = objeto.precio_SBT
+					(detalle[comuna])[19] = objeto.dias_SBT
 					
 	return detalle		
 
@@ -503,4 +535,10 @@ file_name_propuesta = "propuesta2.xlsx"
 almacenador = AlmacenarDatos(file_name_propuesta)
 #ActualizarDetalle(file_name_propuesta,almacenador)
 detalle = ReordenarDiccionario(almacenador)
-DefinirMejorC(detalle)
+detalle = DefinirMejorC(detalle)
+for comuna in detalle:
+	print(comuna)
+	for objeto in detalle[comuna]:
+		print(objeto," ",end="")
+	print()
+	print()
