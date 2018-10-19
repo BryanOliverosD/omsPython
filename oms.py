@@ -4,6 +4,7 @@ import re
 from unicodedata import normalize
 import math
 
+
 class ShippingFalabella():
 	#Atributos generales
 	nombreProducto = ""
@@ -804,6 +805,32 @@ def calcularNuevaTarifa(analisis):
 		contador = contador + 1
 		
 	return analisis
+
+def RestriccionesTickets(analisis):
+
+	for comuna in analisis:
+
+		datos = analisis[comuna]
+
+		print(datos[8],datos[17],datos[26])
+		
+		if str(datos[8]).isdigit() is True and str(datos[17]).isdigit() is True:
+
+			if int(datos[17]) <= int(datos[8]):
+				datos[17] = datos[8] + 2000
+
+		elif str(datos[17]).isdigit() is True and str(datos[26]).isdigit() is True:
+			if int(datos[17]) == int(datos[26]):
+				datos[26] = datos[17] + 1000
+			elif datos[26] < datos[17]:
+				if datos[8] == "":
+					datos[17] = datos[26]-1000
+				elif datos[8] !="" and int(datos[26])-1000 > int(datos[8]):
+					datos[17] = datos[26]-1000
+				elif datos[8] !="" and int(datos[26])-1000 <= int(datos[8]):
+					datos[26] = datos[17] + 1000
+		print(datos[8],datos[17],datos[26])
+	return analisis
 ########################################################
 ####################### MAIN ###########################
 #########################################################
@@ -811,7 +838,8 @@ def calcularNuevaTarifa(analisis):
 almacenador = {}
 detalle = {}
 analisis = {}
-
+#parche = {}
+#parche["QUILI"] = [5490, 1, 5350, 2, 3990, 1, 'Escenario 4', 5490, 'x', 9990, 4, 7850, 1, 9990, 2, 'Escenario 3', 7840, 7840, 10990, 4, 8990, 1, 9990, 2, 'Escenario 3', 8980, 5980]
 file_name_shipping = "input/shipping_Falabella.xls"
 file_name_propuesta = "input/propuesta2.xlsm"
 #CopiarHojaDetalle(file_name_propuesta,file_name_shipping)
@@ -822,7 +850,7 @@ detalle = ReordenarDiccionario(almacenador)
 # actualizamos MT;BT;SBT
 analisis = GenerarAnalisis(detalle)
 analisis = calcularNuevaTarifa(analisis)
-
+analisis = RestriccionesTickets(analisis)
 """for comuna in analisis:
 	print(comuna)
 	for objeto in analisis[comuna]:
