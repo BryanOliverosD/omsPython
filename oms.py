@@ -9,20 +9,21 @@ analisis = {}
 #print(y,x,a,b,c)
 file_name_shipping = "input/shipping_Falabella.xls"
 file_name_propuesta = "input/propuesta2.xlsm"
-funciones.LeerParametros()
+funciones.leerParametros()
 #parametros basicos
 y = funciones.y
 x = funciones.x
 a = funciones.a
 b = funciones.b
 c = funciones.c
-funciones.CopiarHojaDetalle(file_name_propuesta,file_name_shipping)
+funciones.copiarHojaDetalle(file_name_propuesta,file_name_shipping)
 #funciones.ValidarParametros(file_name_propuesta)
-almacenador = funciones.AlmacenarDatos(file_name_propuesta)
+almacenador = funciones.almacenarDatos(file_name_propuesta)
 #funciones.ActualizarDetalle(file_name_propuesta,almacenador)
-detalle = funciones.ReordenarDiccionario(almacenador)
+detalle = funciones.reordenarDiccionario(almacenador)
 # actualizamos MT;BT;SBT
-analisis = funciones.GenerarAnalisis(detalle)
+analisis = funciones.generarAnalisis(detalle)
+analisis = funciones.aproximarValores(analisis)
 analisis = funciones.calcularNuevaTarifa(analisis)
-analisis = funciones.RestriccionesTickets(analisis)
-funciones.GenerarResumen(analisis)
+analisis = funciones.restriccionesTickets(analisis)
+funciones.generarResumen(analisis)

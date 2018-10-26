@@ -21,7 +21,7 @@ class ShippingMatrix():
 	tarifaSugerida = ""
 
 ##### Se copia información desde archivo shipping a propuesta #####
-def CopiarHojaDetalle(name_propuesta,name_shipping):
+def copiarHojaDetalle(name_propuesta,name_shipping):
 
 	sheet_shipping = "Hoja 1"
 
@@ -53,7 +53,7 @@ def CopiarHojaDetalle(name_propuesta,name_shipping):
 	df2.to_excel(writer, sheet_name ='Detalle', index=False, header=False, startcol=0, startrow=6)
 	writer.save() 
 
-def LeerParametros():
+def leerParametros():
 	
 	global x,y,a,b,c
 	
@@ -73,7 +73,7 @@ def LeerParametros():
 				c = row[1]
 
 ## Validamos parámetros hoja base archivo propuesta actualizado ##
-def ValidarParametros(name_propuesta):
+def validarParametros(name_propuesta):
 
 	sheet_base = "Base"
 
@@ -107,7 +107,7 @@ def ValidarParametros(name_propuesta):
 	writer.save()
 
 ####### Almacenar datos ##############
-def AlmacenarDatos(name_propuesta):
+def almacenarDatos(name_propuesta):
 	#creamos diccionario
 	almacenador = {}
 	
@@ -207,7 +207,7 @@ def AlmacenarDatos(name_propuesta):
 
 
 ######## Actualizar Hoja Detalle #############
-def ActualizarDetalle(name_propuesta,almacenador):
+def actualizarDetalle(name_propuesta,almacenador):
 
 	objetos = []
 
@@ -290,7 +290,7 @@ def ActualizarDetalle(name_propuesta,almacenador):
 	writer.save()
 
 ############################# COMPETIDORES MT ###########################
-def DefinirMejorMT(detalle):
+def definirMejorMT(detalle):
 
 	valor_escenario = []
 
@@ -333,7 +333,7 @@ def DefinirMejorMT(detalle):
 			dias_mejorC = diasParis_MT
 			precio_mejorC = precioParis_MT
 			#árbol con Paris
-			valor_escenario = ArbolDecision(diasFalabella_MT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_MT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[2] = "Sin datos"
 			(detalle[comuna])[3] = "Sin datos"
@@ -346,7 +346,7 @@ def DefinirMejorMT(detalle):
 			dias_mejorC = diasRipley_MT
 			precio_mejorC = precioRipley_MT
 			#árbol con Ripley
-			valor_escenario = ArbolDecision(diasFalabella_MT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_MT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[4] = "Sin datos"
 			(detalle[comuna])[5] = "Sin datos"
@@ -369,7 +369,7 @@ def DefinirMejorMT(detalle):
 				#dias_Competidor1 =diasParis_MT
 				precio_Competidor1 = precioParis_MT
 
-			valor_escenario = ArbolDecision(diasFalabella_MT,precio_Competidor1,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_MT,precio_Competidor1,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[6] = valor_escenario[0]
 			(detalle[comuna])[7] = valor_escenario[1]
@@ -377,7 +377,7 @@ def DefinirMejorMT(detalle):
 	return detalle
 
 ############################# COMPETIDORES BT ###########################
-def DefinirMejorBT(detalle):
+def definirMejorBT(detalle):
 
 	valor_escenario = []
 
@@ -422,7 +422,7 @@ def DefinirMejorBT(detalle):
 			dias_mejorC = diasParis_BT
 			precio_mejorC = precioParis_BT
 			#árbol con Paris
-			valor_escenario = ArbolDecision(diasFalabella_BT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_BT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[12] = "Sin datos"
 			(detalle[comuna])[13] = "Sin datos"
@@ -435,7 +435,7 @@ def DefinirMejorBT(detalle):
 			dias_mejorC = diasRipley_BT
 			precio_mejorC = precioRipley_BT
 			#árbol con Ripley
-			valor_escenario = ArbolDecision(diasFalabella_BT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_BT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[14] = "Sin datos"
 			(detalle[comuna])[15] = "Sin datos"
@@ -458,7 +458,7 @@ def DefinirMejorBT(detalle):
 				#dias_Competidor1 =diasParis_BT
 				precio_Competidor1 = precioParis_BT
 
-			valor_escenario = ArbolDecision(diasFalabella_BT,precio_Competidor1,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_BT,precio_Competidor1,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[15] = valor_escenario[0]
 			(detalle[comuna])[16] = valor_escenario[1]
@@ -466,7 +466,7 @@ def DefinirMejorBT(detalle):
 	return detalle
 
 ############################# COMPETIDORES SBT ###########################
-def DefinirMejorSBT(detalle):
+def definirMejorSBT(detalle):
 
 	valor_escenario = []
 
@@ -513,7 +513,7 @@ def DefinirMejorSBT(detalle):
 			dias_mejorC = diasParis_SBT
 			precio_mejorC = precioParis_SBT
 			#árbol con Paris
-			valor_escenario = ArbolDecision(diasFalabella_SBT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_SBT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[20] = "Sin datos"
 			(detalle[comuna])[21] = "Sin datos"
@@ -526,7 +526,7 @@ def DefinirMejorSBT(detalle):
 			dias_mejorC = diasRipley_SBT
 			precio_mejorC = precioRipley_SBT
 			#árbol con Ripley
-			valor_escenario = ArbolDecision(diasFalabella_SBT,0,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_SBT,0,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[22] = "Sin datos"
 			(detalle[comuna])[23] = "Sin datos"
@@ -549,14 +549,14 @@ def DefinirMejorSBT(detalle):
 				#dias_Competidor1 =diasParis_SBT
 				precio_Competidor1 = precioParis_SBT
 
-			valor_escenario = ArbolDecision(diasFalabella_SBT,precio_Competidor1,dias_mejorC,precio_mejorC)
+			valor_escenario = arbolDecision(diasFalabella_SBT,precio_Competidor1,dias_mejorC,precio_mejorC)
 			#insertamos el escenario y su tarifa sugerida
 			(detalle[comuna])[24] = valor_escenario[0]
 			(detalle[comuna])[25] = valor_escenario[1]
 
 	return detalle
 
-def ArbolDecision(diasCompetidor1, tarifaCompetidor1, diasMCompetidor, tarifaMCompetidor):
+def arbolDecision(diasCompetidor1, tarifaCompetidor1, diasMCompetidor, tarifaMCompetidor):
 	global x,y,a,b,c
 	valor_escenario = []
 	#Se comparan los días entre Falabella y el mejor competidor
@@ -613,7 +613,7 @@ def ArbolDecision(diasCompetidor1, tarifaCompetidor1, diasMCompetidor, tarifaMCo
 	
 	return valor_escenario
 
-def ReordenarDiccionario(almacenador):
+def reordenarDiccionario(almacenador):
 
 	detalle = {}
 
@@ -689,15 +689,118 @@ def ReordenarDiccionario(almacenador):
 					
 	return detalle		
 
-def GenerarAnalisis(analisis):
+def generarAnalisis(analisis):
 
-	analisis = DefinirMejorMT(analisis)
-	analisis = DefinirMejorBT(analisis)
-	analisis = DefinirMejorSBT(analisis)
+	analisis = definirMejorMT(analisis)
+	analisis = definirMejorBT(analisis)
+	analisis = definirMejorSBT(analisis)
 
 	return analisis
 
-def GenerarResumen(analisis):
+def calcularNuevaTarifa(analisis):
+
+	contador = 0
+	#lista de comunas santiago urbano
+	comunas_urbanas = ["SANTIAGO","LAS CONDES","PROVIDENCIA","MAIPU","NUNOA","PUENTE ALTO","LA FLORIDA","VITACURA","PUDAHUEL","PENALOLEN",
+	"SAN MIGUEL","SAN BERNARDO","QUILICURA","RECOLETA","LO BARNECHEA","LA REINA","HUECHURABA","QUINTA NORMAL","RENCA","ESTACIÓN CENTRAL","EL BOSQUE",
+	"MACUL","LA CISTERNA","CONCHALI","INDEPENDENCIA","CERRO NAVIA","LA DEHESA","LA PINTANA","LO PRADO","LA GRANJA","CERRILLOS","SAN JOAQUIN","PEDRO AGUIRRE CERDA","SAN RAMON"]
+
+	for comuna in analisis:
+
+		datos = analisis[comuna]
+
+		### MT ###
+		# Condición para las comunas urbanas que tienen un valor constantes
+		#490-990
+		if comuna in comunas_urbanas and datos[7] != "Mantener valor" and datos[7]!="Manual":
+			print(comuna)
+			tarifasugerida = 3990
+		else:
+			tarifasugerida = datos[7]
+
+		if datos[0] != tarifasugerida:
+			datos[8] = tarifasugerida
+		else:
+			datos[8] = ""
+		### BT ###
+		if datos[9] != datos[16]:
+			datos[17] = datos[16]
+		else:
+			datos[17] = ""
+		### SBT ###
+		if datos[18] != datos[25]:
+			datos[26] = datos[25]
+		else:
+			datos[26] = ""
+
+		contador = contador + 1
+		
+	return analisis
+
+def aproximarValores(analisis):
+# restricción que aproxima valores a 490 o 990
+	for comuna in analisis:
+		datos = analisis[comuna]
+
+		tarifa_inicial = str(datos[7])
+
+		if len(tarifa_inicial) == 4 and tarifa_inicial[1:len(tarifa_inicial)] != 990 and tarifa_inicial[1:len(tarifa_inicial)] != 490:
+			#quitamos primera cifra
+			tarifa = tarifa_inicial[1:len(tarifa_inicial)]
+			#se calcula la diferencia positiva
+			tarifa1 = abs(990 - int(tarifa))
+			tarifa2 = abs(490 - int(tarifa))
+			#se calcula el valor minimo
+			tarifaMin = min(tarifa1,tarifa2)
+			datos[7] = tarifaMin + int(tarifa_inicial)
+
+		elif len(tarifa_inicial) == 5 and tarifa_inicial[2:len(tarifa_inicial)] != 990 and tarifa_inicial[2:len(tarifa_inicial)] != 490:
+			#quitamos primeras 2 cifras
+			tarifa = tarifa_inicial[2:len(tarifa_inicial)]
+			#se calcula la diferencia positiva
+			tarifa1 = abs(990 - int(tarifa))
+			tarifa2 = abs(490 - int(tarifa))
+			#se calcula el valor minimo
+			tarifaMin = min(tarifa1,tarifa2)
+			datos[7] = tarifaMin + int(tarifa_inicial)
+
+		elif len(tarifa_inicial) == 6 and tarifa_inicial[3:len(tarifa_inicial)] != 990 and tarifa_inicial[3:len(tarifa_inicial)] != 490:
+			#quitamos primeras 3 cifras
+			tarifa = tarifa_inicial[3:len(tarifa_inicial)]
+			t_mayor = abs(990 - int(tarifa))
+			t_menor = abs(490 - int(tarifa))
+			#se calcula el valor minimo
+			tarifaMin = min(tarifa1,tarifa2)
+			datos[7] = tarifaMin + int(tarifa_inicial)
+
+		analisis[comuna] = datos
+	return analisis
+
+			
+def restriccionesTickets(analisis):
+
+	for comuna in analisis:
+
+		datos = analisis[comuna]
+		
+		if str(datos[8]).isdigit() is True and str(datos[17]).isdigit() is True:
+
+			if int(datos[17]) <= int(datos[8]):
+				datos[17] = datos[8] + 2000
+
+		elif str(datos[17]).isdigit() is True and str(datos[26]).isdigit() is True:
+			if int(datos[17]) == int(datos[26]):
+				datos[26] = datos[17] + 1000
+			elif datos[26] < datos[17]:
+				if datos[8] == "":
+					datos[17] = datos[26]-1000
+				elif datos[8] !="" and int(datos[26])-1000 > int(datos[8]):
+					datos[17] = datos[26]-1000
+				elif datos[8] !="" and int(datos[26])-1000 <= int(datos[8]):
+					datos[26] = datos[17] + 1000
+	return analisis
+
+def generarResumen(analisis):
 
 	file_name_resumen = "input/Salida_OMS.xlsx"
 	contador = 0
@@ -736,6 +839,7 @@ def GenerarResumen(analisis):
 		df.iloc[contador,8] = datos[6]
 		df.iloc[contador,10] = datos[7]
 		df.iloc[contador,11] = datos[8]
+		
 		#Escribimos BT
 		df.iloc[contador,12] = datos[9]
 		df.iloc[contador,13] = datos[10]
@@ -780,54 +884,3 @@ def GenerarResumen(analisis):
 		contador = contador + 1
 		df.to_excel(writer, sheet_name ='Análisis', index=None, header=None, startcol=4, startrow=4)
 	writer.save()
-
-def calcularNuevaTarifa(analisis):
-
-	contador = 0
-
-	for comuna in analisis:
-
-		datos = analisis[comuna]
-
-		### MT ###
-		if datos[0] != datos[7]:
-			datos[8] = datos[7]
-		else:
-			datos[8] = ""
-		### BT ###
-		if datos[9] != datos[16]:
-			datos[17] = datos[16]
-		else:
-			datos[17] = ""
-		### SBT ###
-		if datos[18] != datos[25]:
-			datos[26] = datos[25]
-		else:
-			datos[26] = ""
-
-		contador = contador + 1
-		
-	return analisis
-
-def RestriccionesTickets(analisis):
-
-	for comuna in analisis:
-
-		datos = analisis[comuna]
-		
-		if str(datos[8]).isdigit() is True and str(datos[17]).isdigit() is True:
-
-			if int(datos[17]) <= int(datos[8]):
-				datos[17] = datos[8] + 2000
-
-		elif str(datos[17]).isdigit() is True and str(datos[26]).isdigit() is True:
-			if int(datos[17]) == int(datos[26]):
-				datos[26] = datos[17] + 1000
-			elif datos[26] < datos[17]:
-				if datos[8] == "":
-					datos[17] = datos[26]-1000
-				elif datos[8] !="" and int(datos[26])-1000 > int(datos[8]):
-					datos[17] = datos[26]-1000
-				elif datos[8] !="" and int(datos[26])-1000 <= int(datos[8]):
-					datos[26] = datos[17] + 1000
-	return analisis
