@@ -71,7 +71,6 @@ def leerParametros():
 				b = row[1]
 			elif row[0] == "c":
 				c = row[1]
-
 ## Validamos parámetros hoja base archivo propuesta actualizado ##
 def validarParametros(name_propuesta):
 
@@ -105,7 +104,6 @@ def validarParametros(name_propuesta):
 	
 	df.to_excel(writer, sheet_name='Base', index=False, startcol=1)
 	writer.save()
-
 ####### Almacenar datos ##############
 def almacenarDatos(name_propuesta):
 	#creamos diccionario
@@ -133,7 +131,6 @@ def almacenarDatos(name_propuesta):
 		tienda = str(df.iloc[fila,0])
 		# identifica si la columna tienda es Falabella
 		if tienda.lower() == "falabella":
-
 			shipping_Falabella = ShippingMatrix()
 			shipping_aux = shipping_Falabella
 			shipping_Falabella.nombreTienda = df.iloc[fila,0]
@@ -152,7 +149,6 @@ def almacenarDatos(name_propuesta):
 			elif df.iloc[fila,7] == "SBT":
 				shipping_Falabella.precio_SBT = df.iloc[fila,5]
 				shipping_Falabella.dias_SBT = df.iloc[fila,6]
-
 		# identifica si la columna tienda es Ripley
 		elif tienda.lower() == "ripley":
 
@@ -173,10 +169,8 @@ def almacenarDatos(name_propuesta):
 			elif df.iloc[fila,7] == "SBT":
 				shipping_Ripley.precio_SBT = df.iloc[fila,5]
 				shipping_Ripley.dias_SBT = df.iloc[fila,6]
-
 		# identifica si la columna tienda es Paris
 		elif tienda.lower() == "paris":
-
 			shipping_Paris = ShippingMatrix()
 			shipping_aux = shipping_Paris
 			shipping_Paris.nombreTienda = df.iloc[fila,0]
@@ -204,8 +198,6 @@ def almacenarDatos(name_propuesta):
 		else:
 			almacenador[str(comuna)] = objetos + almacenador[str(comuna)]
 	return almacenador
-
-
 ######## Actualizar Hoja Detalle #############
 def actualizarDetalle(name_propuesta,almacenador):
 
@@ -569,7 +561,7 @@ def arbolDecision(diasCompetidor1, tarifaCompetidor1, diasMCompetidor, tarifaMCo
 
 				tarifaMin = min(tarifaMCompetidor,tarifaCompetidor1)
 				valor_escenario.append("Escenario 1")
-				valor_escenario.append(tarifaMin)
+				valor_escenario.append(tarifaMin+int((int(y)*tarifaMin/100)))
 			else:
 				tarifaMin = min(tarifaMCompetidor,tarifaCompetidor1)
 				valor_escenario.append("Escenario 2")
@@ -713,7 +705,6 @@ def calcularNuevaTarifa(analisis):
 		# Condición para las comunas urbanas que tienen un valor constantes
 		#490-990
 		if comuna in comunas_urbanas and datos[7] != "Mantener valor" and datos[7]!="Manual":
-			print(comuna)
 			tarifasugerida = 3990
 		else:
 			tarifasugerida = datos[7]
@@ -743,8 +734,30 @@ def aproximarValores(analisis):
 		datos = analisis[comuna]
 
 		tarifa_inicial = str(datos[7])
+		# Preguntar por tamaño del número
+		if len(tarifa_inicial) == 4 and int(tarifa_inicial[1:len(tarifa_inicial)]) != 990 and int(tarifa_inicial[1:len(tarifa_inicial)]) != 490:
+			#Se quita la primera unidad del número y se compara
+			if int(tarifa_inicial[1:len(tarifa_inicial)]) < 501:
+				datos[7] = int(str(tarifa_inicial[0:1]) + str(490))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:1]) + str(990))
+		#Se quitan las primeras 2 unidades del número y se compara
+		elif len(tarifa_inicial) == 5 and int(tarifa_inicial[2:len(tarifa_inicial)]) != 990 and int(tarifa_inicial[2:len(tarifa_inicial)]) != 490:
+			print(comuna,"--",tarifa_inicial,"--",tarifa_inicial[2:len(tarifa_inicial)],"--")
+			if int(tarifa_inicial[1:len(tarifa_inicial)]) < 501:
+				datos[7] = int(str(tarifa_inicial[0:2]) + str(490))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:2]) + str(990))
+		#Se quitan las primeras 3 unidades del número y se compara
+		elif len(tarifa_inicial) == 6 and int(tarifa_inicial[3:len(tarifa_inicial)]) != 990 and int(tarifa_inicial[3:len(tarifa_inicial)]) != 490:
+			if int(tarifa_inicial[1:len(tarifa_inicial)]) < 501:
+				datos[7] = int(str(tarifa_inicial[0:3]) + str(490))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:3]) + str(990))
 
-		if len(tarifa_inicial) == 4 and tarifa_inicial[1:len(tarifa_inicial)] != 990 and tarifa_inicial[1:len(tarifa_inicial)] != 490:
+
+
+		"""if len(tarifa_inicial) == 4 and tarifa_inicial[1:len(tarifa_inicial)] != 990 and tarifa_inicial[1:len(tarifa_inicial)] != 490:
 			#quitamos primera cifra
 			tarifa = tarifa_inicial[1:len(tarifa_inicial)]
 			#se calcula la diferencia positiva
@@ -752,7 +765,10 @@ def aproximarValores(analisis):
 			tarifa2 = abs(490 - int(tarifa))
 			#se calcula el valor minimo
 			tarifaMin = min(tarifa1,tarifa2)
-			datos[7] = tarifaMin + int(tarifa_inicial)
+			if tarifaMin == tarifa1:
+				datos[7] = int(str(tarifa_inicial[0:1]) + str(990))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:1]) + str(490))
 
 		elif len(tarifa_inicial) == 5 and tarifa_inicial[2:len(tarifa_inicial)] != 990 and tarifa_inicial[2:len(tarifa_inicial)] != 490:
 			#quitamos primeras 2 cifras
@@ -762,7 +778,11 @@ def aproximarValores(analisis):
 			tarifa2 = abs(490 - int(tarifa))
 			#se calcula el valor minimo
 			tarifaMin = min(tarifa1,tarifa2)
-			datos[7] = tarifaMin + int(tarifa_inicial)
+			if tarifaMin == tarifa1:
+				datos[7] = int(str(tarifa_inicial[0:2]) + str(990))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:2]) + str(490))
+			#datos[7] = tarifaMin + int(tarifa_inicial)
 
 		elif len(tarifa_inicial) == 6 and tarifa_inicial[3:len(tarifa_inicial)] != 990 and tarifa_inicial[3:len(tarifa_inicial)] != 490:
 			#quitamos primeras 3 cifras
@@ -771,8 +791,10 @@ def aproximarValores(analisis):
 			t_menor = abs(490 - int(tarifa))
 			#se calcula el valor minimo
 			tarifaMin = min(tarifa1,tarifa2)
-			datos[7] = tarifaMin + int(tarifa_inicial)
-
+			if tarifaMin == tarifa1:
+				datos[7] = int(str(tarifa_inicial[0:3]) + str(990))
+			else:
+				datos[7] = int(str(tarifa_inicial[0:3]) + str(490))"""
 		analisis[comuna] = datos
 	return analisis
 
