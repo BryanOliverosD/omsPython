@@ -1,0 +1,5 @@
+escenario 1:
+en imagen sale Tmin
+en excel Tmin + 10%
+
+hay valores que son cambiados de mala manera.

@@ -1,0 +1,9 @@
+4 bandas:
+
+5 opciones con horario diferentes
+9-20
+
+tarifa normal aumenta 40% aproximándolo a los 990
+
+cuando 4 bandas tiene uso mayor al 20%, pasa de 40% a 60%
+si alfguna de las franjas se usa 
