@@ -6,14 +6,14 @@ app = Flask(__name__)
 api = Api(app)
 
 class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
+	def get(self):
+		return {'hello': 'world'}
 class ExecuteOMS(Resource):
-    def get(self):
-        oms.CallOMS("input/shipping_Falabella.xls","input/propuesta2.xlsm")
-        return{'message':'Generación exitosa'}
+	def get(self):
+		oms.CallOMS("Input/shipping_Falabella.xlsx","Plantilla/propuesta.xlsx")
+		return{'message':'Generación exitosa'}
 api.add_resource(HelloWorld, '/')
 api.add_resource(ExecuteOMS,'/api/v1/OMS/ShippingMatrix')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+	app.run(debug=True)
