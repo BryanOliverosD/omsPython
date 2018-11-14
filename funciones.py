@@ -42,32 +42,33 @@ def leerParametros():
 def copiarHoja(nameShipping, namePropuesta):
 	sheetShipping = "Hoja1"
 	archivopropuesta = pd.ExcelFile(namePropuesta)
+	try:
+		excelfileShipping = pd.read_excel(skiprows=0,io=nameShipping, sheet_name=sheetShipping, usecols='A:I')
+		#excelfileDetalle = pd.read_excel(header=None,io=namePropuesta, sheet_name="Detalle", usecols='A:AA', nrows=6,index=False)
+		#Excelfile_comunas = pd.read_excel(skiprows=6,header=None,io=namePropuesta, sheet_name="Detalle", usecols='A',index=False)
+		# Create a Pandas dataframe from the data.
+		df = pd.DataFrame(excelfileShipping)
+		#df1 = pd.DataFrame(excelfileDetalle)
+		#df2 = pd.DataFrame(Excelfile_comunas)
+		# Se crea un nuevo archivo en el cual se pegará lo tomado desde la hoja detalles y posteriormente guardamos.
+		book = load_workbook(namePropuesta)
+		writer = pd.ExcelWriter(namePropuesta, engine='openpyxl')
+		writer.book = book
+		writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+		"""#eliminamos la hoja detalle para que se eliminen las tablas dinámicas
+		sheet_detalle = book["Detalle"]
+		book.remove(sheet_detalle)
 
-	excelfileShipping = pd.read_excel(skiprows=0,io=nameShipping, sheet_name=sheetShipping, usecols='A:I')
-	#excelfileDetalle = pd.read_excel(header=None,io=namePropuesta, sheet_name="Detalle", usecols='A:AA', nrows=6,index=False)
-	#Excelfile_comunas = pd.read_excel(skiprows=6,header=None,io=namePropuesta, sheet_name="Detalle", usecols='A',index=False)
-
-	# Create a Pandas dataframe from the data.
-	df = pd.DataFrame(excelfileShipping)
-	#df1 = pd.DataFrame(excelfileDetalle)
-	#df2 = pd.DataFrame(Excelfile_comunas)
-	# Se crea un nuevo archivo en el cual se pegará lo tomado desde la hoja detalles y posteriormente guardamos.
-	book = load_workbook(namePropuesta)
-	writer = pd.ExcelWriter(namePropuesta, engine='openpyxl')
-	writer.book = book
-	writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-	"""#eliminamos la hoja detalle para que se eliminen las tablas dinámicas
-	sheet_detalle = book["Detalle"]
-	book.remove(sheet_detalle)
-
-	writer.book = book
-	writer.sheets = dict((ws.title, ws) for ws in book.worksheets)"""
-	#ordenamos el excel
-	df = df[['tienda','region','comuna','sku','producto','costo','dias','updated','tamano']]
-	df.to_excel(writer, sheet_name = 'Hoja1', index = False, startcol = 1 )
-	#df1.to_excel(writer, sheet_name ='Detalle', index=False, header=False)
-	#df2.to_excel(writer, sheet_name ='Detalle', index=False, header=False, startcol=0, startrow=6)
-	writer.save()
+		writer.book = book
+		writer.sheets = dict((ws.title, ws) for ws in book.worksheets)"""
+		#ordenamos el excel
+		df = df[['tienda','region','comuna','sku','producto','costo','dias','updated','tamano']]
+		df.to_excel(writer, sheet_name = 'Hoja1', index = False, startcol = 1 )
+		#df1.to_excel(writer, sheet_name ='Detalle', index=False, header=False)
+		#df2.to_excel(writer, sheet_name ='Detalle', index=False, header=False, startcol=0, startrow=6)
+		writer.save()
+	except Exception as e:
+		print(e)
 ## Validamos parámetros hoja base archivo propuesta actualizado ##
 def validarParametros(namePropuesta):
 
@@ -276,7 +277,7 @@ def definirMejorMT(detalle):
 			(detalle[comuna])[7] = "Mantener valor"
 			(detalle[comuna])[8] = "Mantener valor"
 		# Validación relacionada a la no información de competidores
-		elif(diasRipleyMT == -1 and precioRipleyMT == -1 and precioParisMT == -1 and diasParisMT == -1):
+		if(diasRipleyMT == -1 and precioRipleyMT == -1 and precioParisMT == -1 and diasParisMT == -1):
 			#print("Competidores Sin datos")
 			#(detalle[comuna])[7] = precioFalabellaMT
 			(detalle[comuna])[2] = "Sin datos"
@@ -476,15 +477,25 @@ def arbolDecision(diasCompetidorA, tarifaCompetidorA, diasMCompetidor, tarifaMCo
 			if(tarifaCompetidorA != tarifaMCompetidor):
 				tarifaMin = min(tarifaMCompetidor,tarifaCompetidorA)
 				valorEscenario.append("Escenario 1")
-				valorEscenario.append(tarifaMin+int((int(y)*tarifaMin/100)))
+				if (tarifaMin == 0):
+					tarifaMin = max(tarifaMCompetidor,tarifaCompetidorA)
+					valorEscenario.append(tarifaMin+int((int(y)*tarifaMin/100)))
+				else:
+					valorEscenario.append(tarifaMin+int((int(y)*tarifaMin/100)))
 			else:
 				tarifaMin = min(tarifaMCompetidor,tarifaCompetidorA)
 				valorEscenario.append("Escenario 2")
-				valorEscenario.append(tarifaMin-int(x))
+				if (tarifaMin == 0):
+					tarifaMin = max(tarifaMCompetidor,tarifaCompetidorA)
+					valorEscenario.append(tarifaMin-int(x))
+				else:
+					valorEscenario.append(tarifaMin-int(x))
 		elif (abs(diasMCompetidor - diasCompetidorA) > 2):
 			tarifaMin = min(tarifaMCompetidor,tarifaCompetidorA)
 			minPorcentaje = (int(tarifaFalabella) * 85 ) / 100
 			valorEscenario.append("Escenario 3")
+			if (tarifaMin == 0):
+					tarifaMin = max(tarifaMCompetidor,tarifaCompetidorA)
 			if (tarifaMin >	minPorcentaje):
 				valorEscenario.append(tarifaMin)
 			else:
@@ -626,13 +637,13 @@ def aproximarValores(analisis):
 				datos[7] = int(str(tarifaInicialMT[0:1]) + str(990))
 		#Se quitan las primeras 2 unidades del número y se compara
 		elif len(tarifaInicialMT) == 5 and int(tarifaInicialMT[2:len(tarifaInicialMT)]) != 990 and int(tarifaInicialMT[2:len(tarifaInicialMT)]) != 490:
-			if int(tarifaInicialMT[1:len(tarifaInicialMT)]) < 501:
+			if int(tarifaInicialMT[2:len(tarifaInicialMT)]) < 501:
 				datos[7] = int(str(tarifaInicialMT[0:2]) + str(490))
 			else:
 				datos[7] = int(str(tarifaInicialMT[0:2]) + str(990))
 		#Se quitan las primeras 3 unidades del número y se compara
 		elif len(tarifaInicialMT) == 6 and tarifaInicialMT != "Manual" and int(tarifaInicialMT[3:len(tarifaInicialMT)]) != 990 and int(tarifaInicialMT[3:len(tarifaInicialMT)]) != 490:
-			if int(tarifaInicialMT[1:len(tarifaInicialMT)]) < 501:
+			if int(tarifaInicialMT[3:len(tarifaInicialMT)]) < 501:
 				datos[7] = int(str(tarifaInicialMT[0:3]) + str(490))
 			else:
 				datos[7] = int(str(tarifaInicialMT[0:3]) + str(990))
@@ -645,13 +656,13 @@ def aproximarValores(analisis):
 				datos[16] = int(str(tarifaInicialBT[0:1]) + str(990))
 		#Se quitan las primeras 2 unidades del número y se compara
 		elif len(tarifaInicialBT) == 5 and int(tarifaInicialBT[2:len(tarifaInicialBT)]) != 990 and int(tarifaInicialBT[2:len(tarifaInicialBT)]) != 490:
-			if int(tarifaInicialBT[1:len(tarifaInicialBT)]) < 501:
+			if int(tarifaInicialBT[2:len(tarifaInicialBT)]) < 501:
 				datos[16] = int(str(tarifaInicialBT[0:2]) + str(490))
 			else:
 				datos[16] = int(str(tarifaInicialBT[0:2]) + str(990))
 		#Se quitan las primeras 3 unidades del número y se compara
 		elif tarifaInicialBT != "Manual" and len(tarifaInicialBT) == 6 and int(tarifaInicialBT[3:len(tarifaInicialBT)]) != 990 and int(tarifaInicialBT[3:len(tarifaInicialBT)]) != 490:
-			if int(tarifaInicialBT[1:len(tarifaInicialBT)]) < 501:
+			if int(tarifaInicialBT[3:len(tarifaInicialBT)]) < 501:
 				datos[16] = int(str(tarifaInicialBT[0:3]) + str(490))
 			else:
 				datos[16] = int(str(tarifaInicialBT[0:3]) + str(990))
@@ -664,13 +675,13 @@ def aproximarValores(analisis):
 				datos[25] = int(str(tarifaInicialSBT[0:1]) + str(990))
 		#Se quitan las primeras 2 unidades del número y se compara
 		elif len(tarifaInicialSBT) == 5 and int(tarifaInicialSBT[2:len(tarifaInicialSBT)]) != 990 and int(tarifaInicialSBT[2:len(tarifaInicialSBT)]) != 490:
-			if int(tarifaInicialSBT[1:len(tarifaInicialSBT)]) < 501:
+			if int(tarifaInicialSBT[2:len(tarifaInicialSBT)]) < 501:
 				datos[25] = int(str(tarifaInicialSBT[0:2]) + str(490))
 			else:
 				datos[25] = int(str(tarifaInicialSBT[0:2]) + str(990))
 		#Se quitan las primeras 3 unidades del número y se compara
 		elif len(tarifaInicialSBT) == 6 and tarifaInicialSBT != "Manual" and int(tarifaInicialSBT[3:len(tarifaInicialSBT)]) != 990 and int(tarifaInicialSBT[3:len(tarifaInicialSBT)]) != 490:
-			if int(tarifaInicialSBT[1:len(tarifaInicialSBT)]) < 501:
+			if int(tarifaInicialSBT[3:len(tarifaInicialSBT)]) < 501:
 				datos[25] = int(str(tarifaInicialSBT[0:3]) + str(490))
 			else:
 				datos[25] = int(str(tarifaInicialSBT[0:3]) + str(990))
@@ -716,26 +727,21 @@ def aproximarValores(analisis):
 		analisis[comuna] = datos
 	return analisis
 def restriccionesTickets(analisis):
-
 	for comuna in analisis:
-
 		datos = analisis[comuna]
-
 		if str(datos[8]).isdigit() is True and str(datos[17]).isdigit() is True:
-
 			if int(datos[17]) <= int(datos[8]):
 				datos[17] = datos[8] + 2000
-
-		elif str(datos[17]).isdigit() is True and str(datos[26]).isdigit() is True:
+		if str(datos[17]).isdigit() is True and str(datos[26]).isdigit() is True:
 			if int(datos[17]) == int(datos[26]):
 				datos[26] = datos[17] + 1000
 			elif datos[26] < datos[17]:
 				if datos[8] == "":
-					datos[17] = datos[26]-1000
-				elif datos[8] !="" and int(datos[26])-1000 > int(datos[8]):
-					datos[17] = datos[26]-1000
-				elif datos[8] !="" and int(datos[26])-1000 <= int(datos[8]):
-					datos[26] = datos[17] + 1000
+					datos[17] = datos[26]-500
+				elif datos[8] !="" and int(datos[26])-500 > int(datos[8]):
+					datos[17] = datos[26]-500
+				elif datos[8] !="" and int(datos[26])-500 <= int(datos[8]):
+					datos[26] = datos[17] + 500
 	return analisis
 def generarResumen(analisis):
 	now=datetime.datetime.now().strftime("%d%m%y_%H%M%S")
@@ -756,12 +762,9 @@ def generarResumen(analisis):
 	writer.book = book
 	writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
 	worksheet = writer.sheets["Análisis"]
-
 	#recorremos lo leído en el excel
 	while contador < len(df):
-
 		comuna = df.at[contador,0]
-
 		datos = analisis.get(comuna)
 		if analisis.get(comuna) is None:
 			# normalizamos nombres comuna
@@ -769,6 +772,11 @@ def generarResumen(analisis):
 			comuna = re.sub(r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1",
 			normalize( "NFD", comuna), 0, re.I)
 			datos = analisis.get(comuna)
+
+
+
+
+
 		#Escribiendo MT
 		df.iloc[contador, 0] = datos[0]
 		df.iloc[contador, 1] = datos[1]
@@ -790,13 +798,16 @@ def generarResumen(analisis):
 		df.iloc[contador,20] = datos[15]
 		if comuna.lower() == "iquique" or comuna.lower() == "antofagasta":
 			df.iloc[contador,22] = 21990
-			df.iloc[contador,23] = 21990
+			df.iloc[contador,23] = ""
+			#df.iloc[contador,23] = 21990
 		elif comuna.lower() == "calama":
 			df.iloc[contador,22] = 31990
-			df.iloc[contador,23] = 31990
+			df.iloc[contador,23] = ""
+			#df.iloc[contador,23] = 31990
 		elif comuna.lower() == "punta arenas":
 			df.iloc[contador,22] = 39990
-			df.iloc[contador,23] = 39990
+			df.iloc[contador,23] = ""
+			#df.iloc[contador,23] = 39990
 		else:
 			df.iloc[contador,22] = datos[16]
 			df.iloc[contador,23] = datos[17]
@@ -810,13 +821,16 @@ def generarResumen(analisis):
 		df.iloc[contador,32] = datos[24]
 		if comuna.lower() == "iquique" or comuna.lower() == "antofagasta":
 			df.iloc[contador,34] = 29990
-			df.iloc[contador,35] = 29990
+			df.iloc[contador,35] = ""
+			#df.iloc[contador,35] = 29990
 		elif comuna.lower() == "calama":
 			df.iloc[contador,34] = 41990
-			df.iloc[contador,35] = 41990
+			df.iloc[contador,35] = ""
+			#df.iloc[contador,35] = 41990
 		elif comuna.lower() == "punta arenas":
 			df.iloc[contador,34] = 79990
-			df.iloc[contador,35] = 79990
+			df.iloc[contador,35] = ""
+			#df.iloc[contador,35] = 79990
 		else:
 			df.iloc[contador,34] = datos[25]
 			df.iloc[contador,35] = datos[26]
@@ -824,4 +838,5 @@ def generarResumen(analisis):
 		contador = contador + 1
 		df.to_excel(writer, sheet_name ='Análisis', index=None, header=None, startcol=4, startrow=4)
 	writer.save()
+#def porcentaje4Bandas(nameBandas):
 

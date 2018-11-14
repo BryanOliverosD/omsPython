@@ -9,8 +9,8 @@ def CallOMS(nameShipping,namePropuesta):
 		#diccionario en donde se calculan los escenarios, tarifa sugerida y nueva tarifa. similar hoja análisis
 		analisis = {}
 		#print(y,x,a,b,c)
-		file_name_shipping = nameShipping#"input/shipping_Falabella.xls"
-		file_name_propuesta = namePropuesta#"input/propuesta2.xlsm"
+		fileNameShipping = nameShipping#"input/shipping_Falabella.xls"
+		fileNamePropuesta = namePropuesta#"input/propuesta2.xlsm"
 		funciones.leerParametros()
 		#parametros basicos
 		y = funciones.y
@@ -19,10 +19,10 @@ def CallOMS(nameShipping,namePropuesta):
 		b = funciones.b
 		c = funciones.c
 		d = funciones.d
-		funciones.copiarHoja(file_name_shipping,file_name_propuesta)
-		#funciones.ValidarParametros(file_name_propuesta)
-		almacenador = funciones.almacenarDatos(file_name_propuesta)
-		#funciones.ActualizarDetalle(file_name_propuesta,almacenador)
+		funciones.copiarHoja(fileNameShipping,fileNamePropuesta)
+		#funciones.ValidarParametros(fileNamePropuesta)
+		almacenador = funciones.almacenarDatos(fileNamePropuesta)
+		#funciones.ActualizarDetalle(fileNamePropuesta,almacenador)
 		detalle = funciones.reordenarDiccionario(almacenador)
 		# actualizamos MT;BT;SBT
 		analisis = funciones.generarAnalisis(detalle)
